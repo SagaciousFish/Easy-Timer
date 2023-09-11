@@ -51,4 +51,4 @@ gpuTimer.reset();
 
 ## 许可证
 
-这个项目基于MIT许可证进行许可。详细信息请参阅[LICENSE](LICENSE)文件。
+这个项目基于MIT许可证进行许可。
