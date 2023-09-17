@@ -52,9 +52,9 @@ namespace easy_timer
     class GpuTimer
     {
     private:
-        int stopped;
-        cudaEvent_t ce_start;
-        cudaEvent_t ce_stop;
+        int stopped = 0;
+        cudaEvent_t ce_start = nullptr;
+        cudaEvent_t ce_stop = nullptr;
 
     public:
         GpuTimer()
@@ -63,8 +63,14 @@ namespace easy_timer
         }
         ~GpuTimer()
         {
-            cudaEventDestroy(ce_start);
-            cudaEventDestroy(ce_stop);
+            if (&ce_start != nullptr)
+            {
+                cudaEventDestroy(ce_start);
+            };
+            if (&ce_stop != nullptr)
+            {
+                cudaEventDestroy(ce_stop);
+            };
         }
         void start()
         {
@@ -80,8 +86,14 @@ namespace easy_timer
         void reset()
         {
             stopped = 0;
-            cudaEventDestroy(ce_start);
-            cudaEventDestroy(ce_stop);
+            if (&ce_start != nullptr)
+            {
+                cudaEventDestroy(ce_start);
+            };
+            if (&ce_stop != nullptr)
+            {
+                cudaEventDestroy(ce_stop);
+            };
             cudaEventCreate(&ce_start);
             cudaEventCreate(&ce_stop);
         }
