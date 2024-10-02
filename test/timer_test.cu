@@ -1,4 +1,5 @@
-#include "../src/easy_timer.hpp"
+#include "../src/gpu_timer.cuh"
+#include "../src/cpu_timer.hpp"
 
 #include <cuda_runtime.h>
 #include <iostream>
@@ -20,7 +21,7 @@ void run_with_candidate(int N, int candidate)
     timer.start();
     assign_one<<<NUM_BLOCKS, THREADS_PER_BLOCK>>>(d_a);
     timer.stop();
-    std::cout << timer.getElapsedTime() << std::endl;
+    std::cout << timer.getMillis() << std::endl;
     cudaFree(d_a);
 }
 
@@ -39,7 +40,7 @@ int main(void)
     }
     timer.stop();
     free(a);
-    std::cout << timer.getElapsedTime() << std::endl;
+    std::cout << timer.getMillis() << std::endl;
 
     int candidates[] = {1, 16, 32, 128, 256, 1024};
 
