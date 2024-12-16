@@ -1,45 +1,72 @@
 #pragma once
 
 #include <cuda_runtime.h>
+#include <source_location>
+#include <stdexcept>
+#include <string>
 
 namespace easy_timer
 {
     class GpuTimer
     {
+    protected:
+        bool stopped_;
+        cudaEvent_t ce_start_;
+        cudaEvent_t ce_stop_;
+
     private:
-        bool stopped;
-        cudaEvent_t ce_start;
-        cudaEvent_t ce_stop;
+        static void ThrowOnCudaError(
+            const cudaError_t err,
+            const std::source_location& location = std::source_location::current()
+            )
+        {
+            if (err != cudaSuccess)
+            {
+                throw std::runtime_error(
+                    "CUDA error: " + std::string(cudaGetErrorString(err)) + " at " +
+                    location.file_name() + ":" + std::to_string(location.line()) + " " +
+                    location.function_name());
+            }
+        }
 
     public:
-        GpuTimer() : stopped(true) {
-            cudaEventCreate(&ce_start);
-            cudaEventCreate(&ce_stop);
+        GpuTimer() : stopped_(true) {
+            ThrowOnCudaError(cudaEventCreate(&ce_start_));
+            ThrowOnCudaError(cudaEventCreate(&ce_stop_));
         }
+
         ~GpuTimer()
         {
-            if (&ce_start != nullptr) cudaEventDestroy(ce_start);
-            if (&ce_stop != nullptr) cudaEventDestroy(ce_stop);
+            if (ce_start_ != nullptr) cudaEventDestroy(ce_start_);
+            if (ce_stop_ != nullptr) cudaEventDestroy(ce_stop_);
         }
-        void start()
+
+        void Start()
         {   
-            if (!stopped) return;
-            stopped = false;
-            cudaEventRecord(ce_start, 0);
+            if (!stopped_) return;
+            stopped_ = false;
+            cudaEventRecord(ce_start_, 0);
         }
-        void stop()
+        
+        void Stop()
         {
-            if (stopped) return;
-            stopped = true;
-            cudaEventRecord(ce_stop, 0);
-            cudaEventSynchronize(ce_stop);
+            if (stopped_) return;
+            stopped_ = true;
+            cudaEventRecord(ce_stop_, 0);
+            cudaEventSynchronize(ce_stop_);
         }
-        float getMillis()
+
+        void Reset()
         {
-            float elapsedTime;
-            if (!stopped) this->stop();
-            cudaEventElapsedTime(&elapsedTime, ce_start, ce_stop);
-            return elapsedTime;
+            if (!stopped_) this->Stop();
+        }
+        
+        float GetMillis()
+        {
+            float elapsed_time;
+            if (!stopped_) this->Stop();
+            cudaEventElapsedTime(&elapsed_time, ce_start_, ce_stop_);
+            return elapsed_time;
         }
     };
 }

@@ -4,7 +4,7 @@ EasyTimer是一个简单、易用的CUDA和C++计时器库。它包括了 CPU �
 
 ## 主要功能
 
-`CpuTimer`：使用 clock_gettime 函数，提供毫秒级的精确度，用于测量 CPU 任务的执行时间。
+`CpuTimer`：使用 `std::chrono::<clock>::now` 函数，提供毫秒级的精确度，用于测量 CPU 任务的执行时间。
 `GpuTimer`：使用 CUDA 事件（CUDA Events）来测量 GPU 任务的执行时间。
 
 ## 如何使用
@@ -12,38 +12,38 @@ EasyTimer是一个简单、易用的CUDA和C++计时器库。它包括了 CPU �
 ```c++
 #include "easy_timer.hpp"
 ```
-2. 创建一个 CpuTimer 或 GpuTimer 对象。
+1. 创建一个 CpuTimer 或 GpuTimer 对象。
 ```c++
 easy_timer::CpuTimer cpuTimer;
 easy_timer::GpuTimer gpuTimer;
 ```
-3. 使用 start() 方法开始计时，使用 stop() 方法停止计时。
+1. 使用 Start() 方法开始计时，使用 Stop() 方法停止计时。
 ```c++
-cpuTimer.start();
+cpuTimer.Start();
 /*
  * CPU 任务代码
  */
-cpuTimer.stop();
+cpuTimer.Stop();
 
-gpuTimer.start();
+gpuTimer.Start();
 /*
  * GPU 任务代码
  */
-gpuTimer.stop();
+gpuTimer.Stop();
 ```
-4. 使用 getElapsedTime() 方法获取经过的时间（毫秒）。
+1. 使用 GetMillis() 方法获取经过的时间（毫秒）。
 ```c++
-double cpuTime = cpuTimer.getElapsedTime();
-double gpuTime = gpuTimer.getElapsedTime();
+double cpuTime = cpuTimer.GetMillis();
+double gpuTime = gpuTimer.GetMillis();
 ```
-5. 使用 reset() 方法重置计时器。
+1. 使用 reset() 方法重置计时器。
 ```c++
 cpuTimer.reset();
 gpuTimer.reset();
 ```
 
 ## 注意事项
-本库需要 CUDA 环境支持，因为 GPU 计时器使用了 CUDA 事件进行计时。
+`easy_timer::GpuTimer` 需要 CUDA 环境支持，因为 GPU 计时器使用了 CUDA 事件进行计时。
 
 ## 贡献
 

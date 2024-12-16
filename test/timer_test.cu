@@ -6,47 +6,46 @@
 
 __global__ void assign_one(int *a)
 {
-    int tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const unsigned tid = blockIdx.x * blockDim.x + threadIdx.x;
     a[tid] = 1;
 }
 
-void run_with_candidate(int N, int candidate)
+void run_with_candidate(const int n, const int candidate)
 {
     easy_timer::GpuTimer timer;
     int *d_a;
-    cudaMalloc((void **)&d_a, N * sizeof(int));
-    int THREADS_PER_BLOCK = candidate;
-    int NUM_BLOCKS = (N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK;
-    std::cout << "<<<" << NUM_BLOCKS << ", " << THREADS_PER_BLOCK << ">>>" << std::endl;
-    timer.start();
-    assign_one<<<NUM_BLOCKS, THREADS_PER_BLOCK>>>(d_a);
-    timer.stop();
-    std::cout << timer.getMillis() << std::endl;
+    cudaMalloc(reinterpret_cast<void**>(&d_a), n * sizeof(int));
+    const int threads_per_block = candidate;
+    int num_blocks = (n + threads_per_block - 1) / threads_per_block;
+    std::cout << "<<<" << num_blocks << ", " << threads_per_block << ">>>" << std::endl;
+    timer.Start();
+    assign_one<<<num_blocks, threads_per_block>>>(d_a);
+    timer.Stop();
+    std::cout << timer.GetMillis() << std::endl;
     cudaFree(d_a);
 }
 
-int main(void)
+void cpu_timer_usage(const int n)
 {
-    int N = (256 * 1024 * 1024);
-    std::cout << N << std::endl;
-
     easy_timer::CpuTimer timer;
-    int *a;
-    a = (int *)malloc(N * sizeof(int));
-    timer.start();
-    for (int i = 0; i < N; i++)
-    {
-        a[i] = 1;
-    }
-    timer.stop();
-    free(a);
-    std::cout << timer.getMillis() << std::endl;
+    std::unique_ptr<int[]> a(new int[n]);
+    timer.Start();
+    for (int i = 0; i < n; i++) a[i] = 1;
+    timer.Stop();
+    std::cout << timer.GetMillis() << std::endl;
+}
 
-    int candidates[] = {1, 16, 32, 128, 256, 1024};
+void gpu_timer_usage(const int n)
+{
 
-    for (int candidate : candidates)
-    {
-        std::cout << "candidate: " << candidate << std::endl;
-        run_with_candidate(N, candidate);
-    }
+    for (int candidates[] = {1, 16, 32, 48, 64, 128, 256, 1024}; const int candidate : candidates)
+        run_with_candidate(n, candidate);
+}
+
+int main()
+{
+    const int n = (256 * 1024 * 1024);
+
+    cpu_timer_usage(n);
+    gpu_timer_usage(n);
 }
