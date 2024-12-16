@@ -22,10 +22,11 @@ namespace easy_timer
         {
             if (err != cudaSuccess)
             {
-                throw std::runtime_error(
-                    "CUDA error: " + std::string(cudaGetErrorString(err)) + " at " +
-                    location.file_name() + ":" + std::to_string(location.line()) + " " +
-                    location.function_name());
+                printf(
+                    ("CUDA error: " + std::string(cudaGetErrorString(err)) + " at " + location.file_name() + ":" +
+                        std::to_string(location.line()) + " " + location.function_name())
+                           .c_str()
+                           );
             }
         }
 
