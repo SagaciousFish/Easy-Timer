@@ -3,6 +3,7 @@
 
 #include <cuda_runtime.h>
 #include <iostream>
+#include <memory>
 
 __global__ void assign_one(int *a, const int n)
 {
