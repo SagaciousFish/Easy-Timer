@@ -38,7 +38,7 @@ void cpu_timer_usage(const int n)
 
 void gpu_timer_usage(const int n)
 {
-    for (int candidates[] = {1, 16, 32, 48, 64, 128, 256, 1024}; const int candidate : candidates)
+    for (int candidates[] = {1, 64, 128}; const int candidate : candidates)
         run_with_candidate(n, candidate);
 }
 
