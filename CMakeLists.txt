@@ -4,9 +4,9 @@ project(easy_timer
         LANGUAGES CXX CUDA
 )
 
-if(NOT CMAKE_BUILD_TYPE)
+if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
-endif()
+endif ()
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
@@ -18,6 +18,10 @@ add_library(${PROJECT_NAME}
         src/cpu_timer.hpp
         src/gpu_timer.cuh
 )
+
+if (NOT PROJECT_IS_TOP_LEVEL)
+    add_library(${PROJECT_NAME}::easy_timer ALIAS easy_timer)
+endif ()
 
 # set linker language
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
