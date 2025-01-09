@@ -17,6 +17,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 add_library(${PROJECT_NAME}
         src/cpu_timer.hpp
         src/gpu_timer.cuh
+        src/easy_timer.cu
 )
 
 if (NOT PROJECT_IS_TOP_LEVEL)
