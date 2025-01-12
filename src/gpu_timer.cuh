@@ -43,12 +43,12 @@ namespace easy_timer
         }
 
         void Start()
-        {   
+        {
             if (!stopped_) return;
             stopped_ = false;
             cudaEventRecord(ce_start_, 0);
         }
-        
+
         void Stop()
         {
             if (stopped_) return;
@@ -61,7 +61,7 @@ namespace easy_timer
         {
             if (!stopped_) this->Stop();
         }
-        
+
         float GetMillis()
         {
             float elapsed_time;
